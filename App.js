@@ -33,6 +33,7 @@ export default function App() {
         return;
       }
 
+      console.log("--------------");
       const pushTokenData = await Notifications.getExpoPushTokenAsync();
       console.log(pushTokenData);
 
@@ -51,18 +52,18 @@ export default function App() {
     const subscription1 = Notifications.addNotificationReceivedListener(
       (notification) => {
         console.log("NOTIFICATION RECEIVED");
-        console.log(notification);
+        // console.log(notification);
         const userName = notification.request.content.data.userName;
-        console.log(userName);
+        // console.log(userName);
       }
     );
 
     const subscription2 = Notifications.addNotificationResponseReceivedListener(
       (response) => {
         console.log("NOTIFICATION  RESPONSE RECEIVED");
-        console.log(response);
+        // console.log(response);
         const userName = response.notification.request.content.data.userName;
-        console.log(userName);
+        // console.log(userName);
       }
     );
 
