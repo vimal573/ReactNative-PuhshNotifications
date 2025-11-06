@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { Button, StyleSheet, View } from "react-native";
+import { Alert, Button, Platform, StyleSheet, View } from "react-native";
 import * as Notifications from "expo-notifications";
 import { useEffect } from "react";
 
@@ -16,27 +16,54 @@ Notifications.setNotificationHandler({
 
 export default function App() {
   useEffect(() => {
-    Notifications.getExpoPushTokenAsync().then((pushTokenData) => {
+    async function configurePushNotification() {
+      const { status } = await Notifications.getPermissionsAsync();
+      let finalStaus = status;
+
+      if (finalStaus !== "granted") {
+        const { status } = Notifications.requestPermissionsAsync();
+        finalStaus = status;
+      }
+
+      if (finalStaus !== "granted") {
+        Alert.alert(
+          "Premissions required",
+          "Push notifications need the appropriate permmissions."
+        );
+        return;
+      }
+
+      console.log("--------------");
+      const pushTokenData = await Notifications.getExpoPushTokenAsync();
       console.log(pushTokenData);
-    });
+
+      if (Platform.OS === "android") {
+        Notifications.setNotificationChannelAsync("default", {
+          name: "default",
+          importance: Notifications.AndroidImportance.DEFAULT,
+        });
+      }
+    }
+
+    configurePushNotification();
   }, []);
 
   useEffect(() => {
     const subscription1 = Notifications.addNotificationReceivedListener(
       (notification) => {
         console.log("NOTIFICATION RECEIVED");
-        console.log(notification);
+        // console.log(notification);
         const userName = notification.request.content.data.userName;
-        console.log(userName);
+        // console.log(userName);
       }
     );
 
     const subscription2 = Notifications.addNotificationResponseReceivedListener(
       (response) => {
         console.log("NOTIFICATION  RESPONSE RECEIVED");
-        console.log(response);
+        // console.log(response);
         const userName = response.notification.request.content.data.userName;
-        console.log(userName);
+        // console.log(userName);
       }
     );
 
