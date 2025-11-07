@@ -35,7 +35,6 @@ export default function App() {
 
       console.log("--------------");
       const pushTokenData = await Notifications.getExpoPushTokenAsync();
-      console.log(pushTokenData);
 
       if (Platform.OS === "android") {
         Notifications.setNotificationChannelAsync("default", {
@@ -52,7 +51,7 @@ export default function App() {
     const subscription1 = Notifications.addNotificationReceivedListener(
       (notification) => {
         console.log("NOTIFICATION RECEIVED");
-        // console.log(notification);
+        console.log(notification);
         const userName = notification.request.content.data.userName;
         // console.log(userName);
       }
@@ -61,9 +60,9 @@ export default function App() {
     const subscription2 = Notifications.addNotificationResponseReceivedListener(
       (response) => {
         console.log("NOTIFICATION  RESPONSE RECEIVED");
-        // console.log(response);
+        console.log(response);
         const userName = response.notification.request.content.data.userName;
-        // console.log(userName);
+        console.log(userName);
       }
     );
 
@@ -89,13 +88,31 @@ export default function App() {
     });
   }
 
+  function sendPushNotificationHandler() {
+    fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        to: "ExponentPushToken[lx2BQ1OiSMgt4xt-pHLZ63]",
+        title: "Test - sent from a device!",
+        body: "This is Test",
+      }),
+    });
+  }
+
   return (
     <View style={styles.container}>
       <Button
         title="Schedule Notification"
         onPress={ScheduleNotificationHandler}
       />
-      <StatusBar style="auto" />
+      <Button
+        title="Send Push Notification"
+        onPress={sendPushNotificationHandler}
+      />
+      <StatusBar style="auto" on />
     </View>
   );
 }
